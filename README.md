@@ -24,9 +24,72 @@ To Implement ELGAMAL ALGORITHM
 6. Security: The security of the ElGamal algorithm relies on the difficulty of solving the discrete logarithm problem in a large prime field, making it secure for encryption.
 
 ## Program:
+```c
+#include <stdio.h>
+#include <math.h>
 
+// Function to compute modular exponentiation: (base^exp) % mod
+long long modExp(long long base, long long exp, long long mod) {
+    long long result = 1;
+    base = base % mod;  // Ensure base < mod
+    while (exp > 0) {
+        if (exp % 2 == 1) {  // If exponent is odd
+            result = (result * base) % mod;
+        }
+        base = (base * base) % mod;
+        exp = exp / 2;
+    }
+    return result;
+}
+
+int main() {
+    long long p, g;
+    long long privateKeyA, publicKeyA;
+    long long message, k;
+    long long c1, c2, decryptedMessage;
+
+    printf("***** ElGamal Encryption/Decryption *****\n\n");
+
+    // Step 1: Input a large prime p and generator g
+    printf("Enter a large prime number (p): ");
+    scanf("%lld", &p);
+
+    printf("Enter a generator (g): ");
+    scanf("%lld", &g);
+
+    // Step 2: Alice inputs her private key
+    printf("Enter Alice's private key: ");
+    scanf("%lld", &privateKeyA);
+
+    // Step 3: Compute Alice's public key
+    publicKeyA = modExp(g, privateKeyA, p);
+    printf("Alice's public key: %lld\n", publicKeyA);
+
+    // Step 4: Bob inputs the message to encrypt and selects random k
+    printf("Enter the message to encrypt (as a number < p): ");
+    scanf("%lld", &message);
+
+    printf("Enter a random number k: ");
+    scanf("%lld", &k);
+
+    // Step 5: Compute ciphertext
+    c1 = modExp(g, k, p);                    // c1 = g^k mod p
+    c2 = (message * modExp(publicKeyA, k, p)) % p;  // c2 = m * (publicKeyA^k) mod p
+
+    printf("Encrypted message (c1, c2): (%lld, %lld)\n", c1, c2);
+
+    // Step 6: Alice decrypts the message
+    decryptedMessage = (c2 * modExp(c1, p - 1 - privateKeyA, p)) % p;
+
+    printf("Decrypted message: %lld\n", decryptedMessage);
+
+    return 0;
+}
+
+```
 
 ## Output:
+<img width="1913" height="902" alt="image" src="https://github.com/user-attachments/assets/1df3332d-c713-41be-ab11-90bab62f26a3" />
 
 
 ## Result:
